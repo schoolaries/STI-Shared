@@ -139,11 +139,34 @@ class ApiRos:
         self.writeSentence(self.inputsentence)
         self.readSentence()
 
-    def printIp(self):
+    def printIp(self, s):
         self.inputsentence = ["/ip/address/print"]
         self.writeSentence(self.inputsentence)
-        self.readSentence()
         
+        while 1:
+             r = select.select([s, sys.stdin], [], [], None)
+             if s in r[0]:
+                # something to read in socket, read sentence
+                x = self.readSentence()
+
+             if sys.stdin in r[0]:
+                # read line from input and strip off newline
+                l = sys.stdin.readline()
+                l = l[:-1]
+
+                # if empty line, send sentence and start with new
+                # otherwise append to input sentence
+                if l == '':
+                    self.writeSentence(self.inputsentence)
+                    inputsententence = []
+                else:
+                    0
+      
+    def deleteIp(self, number):
+        self.inputsentence = ["/ip/address/remove"]
+        self.inputsentence.append("=numbers=" + number)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
  
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -153,22 +176,11 @@ def main():
     
 #CRUD
 
-    apiros.setIp(sys.argv[2], sys.argv[3]);
+    apiros.deleteIp(sys.argv[2]);
 
-    inputsentence = ['']
-    apiros.writeSentence(inputsentence);
-    apiros.readSentence();
-
-    apiros.printIp();
-
-    inputsentence = ['']
-    apiros.writeSentence(inputsentence);
-    apiros.readSentence();
-    
-    inputsentence = ['/exit']
-    apiros.writeSentence(inputsentence);
-    apiros.readSentence();
+    apiros.printIp(s);
 
     
+
 if __name__ == '__main__':
     main()
