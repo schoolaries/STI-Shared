@@ -132,42 +132,130 @@ class ApiRos:
             ret += s
         return ret
 
-    def setIp(self, ip, interface):
+    def createIp(self, ip, interface):
         self.inputsentence = ["/ip/address/add"]
         self.inputsentence.append("=address=" + ip)
         self.inputsentence.append("=interface=" + interface)
         self.writeSentence(self.inputsentence)
         self.readSentence()
 
-    def printIp(self, s):
-        self.inputsentence = ["/ip/address/print"]
+    def readIp(self, s):
+        self.inputsentence = ["/ip/address/getall"]
         self.writeSentence(self.inputsentence)
         
-        while 1:
+	p = 2
+        while p > 1:
              r = select.select([s, sys.stdin], [], [], None)
              if s in r[0]:
                 # something to read in socket, read sentence
                 x = self.readSentence()
+	     
+   	     else:
+		self.inputsentence = ["/quit"]
+		self.writeSentence(self.inputsentence)
+		self.readSentence()	
 
              if sys.stdin in r[0]:
                 # read line from input and strip off newline
                 l = sys.stdin.readline()
-                l = l[:-1]
+		l = l[:-1]
+                
 
                 # if empty line, send sentence and start with new
                 # otherwise append to input sentence
                 if l == '':
                     self.writeSentence(self.inputsentence)
-                    inputsententence = []
-                else:
-                    0
-      
+		    inputsentence = []
+		else:
+		    p = 0
+	     
+    def updateIp(self, numbers, address, interface):
+	self.inputsentence = ["/ip/address/set"]
+	self.inputsentence.append("=numbers=" + numbers)
+	self.inputsentence.append("=address=" + address)
+	self.inputsentence.append("=interface=" + interface)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+  
     def deleteIp(self, number):
         self.inputsentence = ["/ip/address/remove"]
         self.inputsentence.append("=numbers=" + number)
         self.writeSentence(self.inputsentence)
         self.readSentence()
- 
+
+    def createVlan(self, interface, name, id, bridgename, trafficinterface):
+	self.inputsentence = ["/interface/vlan/add"]
+        self.inputsentence.append("=interface=" + interface)
+        self.inputsentence.append("=name=" + name)
+	self.inputsentence.append("=vlan-id=" + id)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+	
+	#Add bridges for each VLAN
+	self.inputsentence = ["/interface/bridge/add"]
+	self.inputsentence.append("=name=" + bridgename)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+	
+	#Add VLAN interface to corresponding bridge
+	self.inputsentence = ["/interface/bridge/port/add"]
+	self.inputsentence.append("=bridge=" + bridgename)
+	self.inputsentence.append("=interface=" + name)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+	#Add VLAN interface to corresponding ethernet interface
+	self.inputsentence = ["/interface/bridge/port/add"]
+	self.inputsentence.append("=bridge=" + bridgename)
+	self.inputsentence.append("=interface=" + trafficinterface)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+    def readVlan(self):
+	self.inputsentence = ["/interface/vlan/print"]
+	self.writeSentence(self.inputsentence)
+	self.readSentence()	
+	
+	#Prints vlan bridge
+	self.inputsentence = [""]
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+	self.inputsentence = ["/interface/bridge/print"]
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+	#Prints vlan bridge port
+	self.inputsentence = [""]
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+	self.inputsentence = ["/interface/bridge/port/print"]
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+    def updateVlan(self, name, vlanid, interface):
+	self.inputsentence = ["/interface/vlan/set"]
+	self.inputsentence.append("=name=" + name)
+	self.inputsentence.append("=vlan-id=" + vlanid)
+	self.inputsentence.append("=interface=" + interface)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+    def deleteVlan(self, bridgeinterface, trafficinterface):
+	self.inputsentence = ["/interface/vlan/remove"]
+        self.inputsentence.append("=numbers=" + bridgeinterface)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+	self.inputsentence = ["/interface/bridge/remove"]
+        self.inputsentence.append("=numbers=" + bridgeinterface)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+ 	self.inputsentence = ["/interface/bridge/port/remove"]
+        self.inputsentence.append("=numbers=" + trafficinterface)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()	
+
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((sys.argv[1], 8728))  
@@ -176,10 +264,14 @@ def main():
     
 #CRUD
 
-    apiros.deleteIp(sys.argv[2]);
-
-    apiros.printIp(s);
-
+    #apiros.createVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+    #apiros.readVlan(s)	
+    #apiros.updateVlan(sys.argv[2], sys.argv[3], sys.argv[4])
+    #apiros.deleteVlan(sys.argv[2], sys.argv[3])
+    #apiros.createIp(sys.argv[2], sys.argv[3])
+    apiros.readIp(s)
+    #apiros.updateIp(sys.argv[2], sys.argv[3], sys.argv[4])
+    #apiros.deleteIp(sys.argv[2])
     
 
 if __name__ == '__main__':
