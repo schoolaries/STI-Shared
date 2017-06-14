@@ -1,4 +1,4 @@
-#!/usr/bin/pythona
+#!/usr/bin/python
 
 import sys, posix, time, md5, binascii, socket, select
 
@@ -132,6 +132,8 @@ class ApiRos:
             ret += s
         return ret
 
+#CRUD FOR IP ADDRESSING
+
     def createIp(self, ip, interface):
         self.inputsentence = ["/ip/address/add"]
         self.inputsentence.append("=address=" + ip)
@@ -163,6 +165,8 @@ class ApiRos:
         self.inputsentence.append("=numbers=" + number)
         self.writeSentence(self.inputsentence)
         self.readSentence()
+
+#CRUD FOR VLAN
 
     def createVlan(self, interface, name, id, bridgename, trafficinterface):
 	self.inputsentence = ["/interface/vlan/add"]
@@ -213,9 +217,10 @@ class ApiRos:
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
 
-    def updateVlan(self, name, vlanid, interface):
+    def updateVlan(self, numbers, name, vlanid, interface):
 	self.inputsentence = ["/interface/vlan/set"]
-	self.inputsentence.append("=name=" + name)
+	self.inputsentence.append("=numbers=" + numbers)
+        self.inputsentence.append("=name=" + name)
 	self.inputsentence.append("=vlan-id=" + vlanid)
 	self.inputsentence.append("=interface=" + interface)
 	self.writeSentence(self.inputsentence)
@@ -235,29 +240,164 @@ class ApiRos:
  	self.inputsentence = ["/interface/bridge/port/remove"]
         self.inputsentence.append("=numbers=" + trafficinterface)
         self.writeSentence(self.inputsentence)
-        self.readSentence()	
+        self.readSentence()
+
+#CRUD FOR FIREWALL RULE
+
+    def createRule(self, chain, action, reject, protocol, src, dst, log):
+        self.inputsentence = ["/ip/firewall/filter/add"]
+        self.inputsentence.append("=chain=" + chain)
+        self.inputsentence.append("=action=" + action)
+	self.inputsentence.append("=reject-with=" + reject)
+	self.inputsentence.append("=protocol=" + protocol)
+	self.inputsentence.append("=src-address=" + src)
+	self.inputsentence.append("=dst-address=" + dst)
+	self.inputsentence.append("=log=" + log)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+    def readRule(self):
+        self.inputsentence = ["/ip/firewall/filter/print"]
+	self.inputsentence.append("=count-only=")
+        self.writeSentence(self.inputsentence)
+	count = int(self.readSentence()[1][5:])
+	for items in range(count):
+	     self.inputsentence = ["/ip/firewall/filter/print"]
+             self.writeSentence(self.inputsentence)
+             self.readSentence()
+        
+    def updateRule(self, numbers, chain, action, reject, protocol, src, dst, log):
+	self.inputsentence = ["/ip/firewall/filter/set"]
+	self.inputsentence.append("=numbers=" + numbers)
+	self.inputsentence.append("=chain=" + chain)
+	self.inputsentence.append("=action=" + action)
+	self.inputsentence.append("=reject-with=" + reject)
+	self.inputsentence.append("=protocol=" + protocol)
+	self.inputsentence.append("=src-address=" + src)
+	self.inputsentence.append("=dst-address=" + dst)
+	self.inputsentence.append("=log=" + log)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+      
+    def deleteRule(self, number):
+        self.inputsentence = ["/ip/firewall/filter/remove"]
+        self.inputsentence.append("=numbers=" + number)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+#CRUD FOR USER
+
+    def printUser(self):
+        self.inputSentence = ["/user/print"]
+        self.inputSentence.append('=count-only=')
+        self.writeSentence(self.inputSentence)
+        count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputSentence = ["/user/print"]
+                self.writeSentence(self.inputSentence)
+                self.readSentence()  
+
+    def editUser(self, ouser, nuser, group, password):
+        self.inputsentence = ["/user/set"]
+        self.inputsentence.append("=numbers=" + ouser)
+        self.inputsentence.append("=name=" + nuser)
+        self.inputsentence.append("=group=" + group)
+        self.inputsentence.append("=password=" + password)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+    def deleUser(self,number):
+        self.inputsentence = ["/user/remove"]
+        self.inputsentence.append("=numbers=" + number)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+#CRUD FOR IP ROUTE
+
+    def addRoute(self, dst, src, gateway):
+        self.inputsentence = ["/ip/route/add"]
+        self.inputsentence.append("=dst-address=" + dst)
+	self.inputsentence.append("=pref-src=" + src)
+        self.inputsentence.append("=gateway=" + gateway)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+    def printRoute(self):
+        self.inputsentence = ["/ip/route/print"]
+	self.inputsentence.append("=count-only=")
+        self.writeSentence(self.inputsentence)
+	count = int(self.readSentence()[1][5:])
+
+	number = 0
+	while (number <= count):
+		self.inputsentence = ["/ip/route/print"]
+		print "No. " + str(number)
+		self.writeSentence(self.inputsentence)
+		self.readSentence()
+		number= number+1
+
+    def deleteRoute(self, number):
+        self.inputsentence = ['/ip/route/remove']
+        self.inputsentence.append('=numbers=' + number)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+    def updateRoute(self, number, dst, source, gateway):
+	self.inputsentence = ["/ip/route/set"]
+	self.inputsentence.append("=numbers=" + number)
+	self.inputsentence.append("=dst-address=" + dst)
+	self.inputsentence.append("=pref-src=" + source)
+	self.inputsentence.append("=gateway=" + gateway)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()	
 
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(('10.10.10.1', 8728))  
     apiros = ApiRos(s);             
     apiros.login('admin', '');
-
-    #apiros.createVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
-    #apiros.readVlan(s)	
-    #apiros.updateVlan(sys.argv[2], sys.argv[3], sys.argv[4])
-    #apiros.deleteVlan(sys.argv[2], sys.argv[3])
-    #apiros.createIp(sys.argv[2], sys.argv[3])
     
-    if sys.argv[1] == "print":
+    if sys.argv[1] == "printip":
 	apiros.readIp();
-    elif sys.argv[1] == "create":
+    elif sys.argv[1] == "createip":
 	apiros.createIp(sys.argv[2], sys.argv[3]);
-    elif sys.argv[1] == "update":
+    elif sys.argv[1] == "updateip":
 	apiros.updateIp(sys.argv[2], sys.argv[3], sys.argv[4]);
-    elif sys.argv[1] == "delete":
+    elif sys.argv[1] == "deleteip":
 	apiros.deleteIp(sys.argv[2]);
-  
+    elif sys.argv[1] == "createvlan":
+        apiros.createVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]);
+    elif sys.argv[1] == "readvlan":
+        apiros.readVlan();
+    elif sys.argv[1] == "updatevlan":
+        apiros.updateVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
+    elif sys.argv[1] == "deletevlan":
+        apiros.deleteVlan(sys.argv[2], sys.argv[3]);
+    elif sys.argv[1] == "printrule":
+	apiros.readRule();
+    elif sys.argv[1] == "createrule":
+	apiros.createRule(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8]);
+    elif sys.argv[1] == "updaterule":
+	apiros.updateRule(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9]);
+    elif sys.argv[1] == "deleterule":
+        apiros.deleteRule(sys.argv[2]);
+    elif sys.argv[1] == "printuser":
+	apiros.printUser();
+    elif sys.argv[1] == "createuser":
+	apiros.setUser(sys.argv[2], sys.argv[3], sys.argv[4]);
+    elif sys.argv[1] == "updateuser":
+	apiros.editUser(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
+    elif sys.argv[1] == "deleteuser":
+        apiros.deleUser(sys.argv[2]);
+    elif sys.argv[1] == "printroute":
+	apiros.printRoute();
+    elif sys.argv[1] == "createroute":
+	apiros.addRoute(sys.argv[2], sys.argv[3], sys.argv[4]);
+    elif sys.argv[1] == "updateroute":
+	apiros.updateRoute(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
+    elif sys.argv[1] == "deleteroute":
+	apiros.deleteRoute(sys.argv[2]);
+    
 if __name__ == '__main__':
     main()
 
