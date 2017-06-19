@@ -1,0 +1,27 @@
+<<< /login
+<<< 
+>>> !done
+>>> =ret=a5c7d373d789dba68e4e82b1b36fa160
+>>> 
+<<< /login
+<<< =name=admin
+<<< =response=0020e6b038410a623b7b057af9d707b498
+<<< 
+>>> !done
+>>> 
+<<< /user/ssh-keys/print
+<<< =count-only=
+<<< 
+>>> !done
+>>> =ret=1
+>>> 
+<<< /user/ssh-keys/print
+<<< 
+>>> !re
+>>> =.id=*1
+>>> =user=rong
+>>> =bits=2048
+>>> =key-owner=ian@ian-VirtualBox
+>>> =RSA=true
+>>> =DSA=false
+>>> 
