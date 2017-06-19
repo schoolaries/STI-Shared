@@ -26,20 +26,20 @@ elif [ "$choice" == "deleteip" ]
 then
 	python crud.py deleteip $argument1 > file.txt
 
-elif [ "$choice" == "createvlan" ]
+elif [ "$choice" == "createvlanall" ]
 then
-        python crud.py createvlan $argument1 $argument2 $argument3 $argument4 $argument5 > file.txt
+        python crud.py createvlanall $argument1 $argument2 $argument3 $argument4 $argument5 > file.txt
 
-elif [ "$choice" == "readvlan" ]
+elif [ "$choice" == "readvlanall" ]
 then
-        python crud.py readvlan  > file.txt
-elif [ "$choice" == "updatevlan" ]
+        python crud.py readvlanall  > file.txt
+elif [ "$choice" == "updatevlanall" ]
 then
-        python crud.py updatevlan $argument1 $argument2 $argument3 $argument4 > file.txt
+        python crud.py updatevlanall $argument1 $argument2 $argument3 $argument4 > file.txt
 
-elif [ "$choice" == "deletevlan" ]
+elif [ "$choice" == "deletevlanall" ]
 then
-        python crud.py deletevlan $argument1 $argument2 > file.txt
+        python crud.py deletevlanall $argument1 $argument2 > file.txt
 
 elif [ "$choice" == "printrule" ]
 then
@@ -88,5 +88,53 @@ then
 elif [ "$choice" == "deleteroute" ]
 then 
         python crud.py deleteroute $argument1 > file.txt
+
+elif [ "$choice" == "createvlan" ]
+then
+        python crud.py createvlan $argument1 $argument2 $argument3 > file.txt
+
+elif [ "$choice" == "readvlan" ]
+then
+        python crud.py readvlan  > file.txt
+
+elif [ "$choice" == "updatevlan" ]
+then
+        python crud.py updatevlan $argument1 $argument2 $argument3 $argument4 > file.txt
+
+elif [ "$choice" == "deletevlan" ]
+then
+        python crud.py deletevlan $argument1 > file.txt
+
+elif [ "$choice" == "createbridge" ]
+then
+        python crud.py createbridge $argument1 > file.txt
+
+elif [ "$choice" == "readbridge" ]
+then
+        python crud.py readbridge > file.txt
+
+elif [ "$choice" == "updatebridge" ]
+then
+        python crud.py updatebridge $argument1 $argument2 > file.txt
+
+elif [ "$choice" == "deletebridge" ]
+then
+        python crud.py deletebridge $argument1 > file.txt
+
+elif [ "$choice" == "createbridgeport" ]
+then
+        python crud.py createbridgeport $argument1 $argument2 $argument3 > file.txt
+
+elif [ "$choice" == "readbridgeport" ]
+then
+        python crud.py readbridgeport > file.txt
+
+elif [ "$choice" == "updatebridgeport" ]
+then
+        python crud.py updatebridgeport $argument1 $argument2 $argument3 > file.txt
+
+elif [ "$choice" == "deletebridgeport" ]
+then
+        python crud.py deletebridgeport $argument1 > file.txt
 fi
 

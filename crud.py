@@ -166,9 +166,9 @@ class ApiRos:
         self.writeSentence(self.inputsentence)
         self.readSentence()
 
-#CRUD FOR VLAN
+#CRUD FOR WHOLE VLAN
 
-    def createVlan(self, interface, name, id, bridgename, trafficinterface):
+    def createVlanAll(self, interface, name, id, bridgename, trafficinterface):
 	self.inputsentence = ["/interface/vlan/add"]
         self.inputsentence.append("=interface=" + interface)
         self.inputsentence.append("=name=" + name)
@@ -196,28 +196,44 @@ class ApiRos:
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
 
-    def readVlan(self):
+    def readVlanAll(self):
+	global b
 	self.inputsentence = ["/interface/vlan/print"]
+	self.inputsentence.append('=count-only=')
 	self.writeSentence(self.inputsentence)
-	self.readSentence()	
+	count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputsentence = ["/interface/vlan/print"]
+                self.writeSentence(self.inputsentence)
+                self.readSentence()	
 	
 	#Prints vlan bridge
-	self.inputsentence = [""]
+	self.inputsentence = []
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
 	self.inputsentence = ["/interface/bridge/print"]
-	self.writeSentence(self.inputsentence)
-	self.readSentence()
+	self.inputsentence.append('=count-only=')
+        self.writeSentence(self.inputsentence)
+        count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputsentence = ["/interface/bridge/print"]
+                self.writeSentence(self.inputsentence)
+                self.readSentence()
 
 	#Prints vlan bridge port
-	self.inputsentence = [""]
+	self.inputsentence = []
         self.writeSentence(self.inputsentence)
         self.readSentence()
 	self.inputsentence = ["/interface/bridge/port/print"]
-	self.writeSentence(self.inputsentence)
-	self.readSentence()
+	self.inputsentence.append('=count-only=')
+        self.writeSentence(self.inputsentence)
+        count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputsentence = ["/interface/bridge/port/print"]
+                self.writeSentence(self.inputsentence)
+                self.readSentence()
 
-    def updateVlan(self, numbers, name, vlanid, interface):
+    def updateVlanAll(self, numbers, name, vlanid, interface):
 	self.inputsentence = ["/interface/vlan/set"]
 	self.inputsentence.append("=numbers=" + numbers)
         self.inputsentence.append("=name=" + name)
@@ -226,7 +242,7 @@ class ApiRos:
 	self.writeSentence(self.inputsentence)
 	self.readSentence()
 
-    def deleteVlan(self, bridgeinterface, trafficinterface):
+    def deleteVlanAll(self, bridgeinterface, trafficinterface):
 	self.inputsentence = ["/interface/vlan/remove"]
         self.inputsentence.append("=numbers=" + bridgeinterface)
         self.writeSentence(self.inputsentence)
@@ -241,6 +257,114 @@ class ApiRos:
         self.inputsentence.append("=numbers=" + trafficinterface)
         self.writeSentence(self.inputsentence)
         self.readSentence()
+
+#CRUD FOR VLAN ONLY
+
+    def createVlan(self, interface, name, id):
+        self.inputsentence = ["/interface/vlan/add"]
+        self.inputsentence.append("=interface=" + interface)
+        self.inputsentence.append("=name=" + name)
+        self.inputsentence.append("=vlan-id=" + id)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+    def readVlan(self):
+        global b
+        self.inputsentence = ["/interface/vlan/print"]
+        self.inputsentence.append('=count-only=')
+        self.writeSentence(self.inputsentence)
+        count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputsentence = ["/interface/vlan/print"]
+                self.writeSentence(self.inputsentence)
+                self.readSentence()
+	
+    def updateVlan(self, numbers, name, vlanid, interface):
+        self.inputsentence = ["/interface/vlan/set"]
+        self.inputsentence.append("=numbers=" + numbers)
+        self.inputsentence.append("=name=" + name)
+        self.inputsentence.append("=vlan-id=" + vlanid)
+        self.inputsentence.append("=interface=" + interface)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+	
+    def deleteVlan(self, number):
+        self.inputsentence = ["/interface/vlan/remove"]
+        self.inputsentence.append("=numbers=" + number)
+        self.writeSentence(self.inputsentence)
+        self.readSentence() 
+
+#CRUD FOR BRIDGES
+
+    def createBridge(self, bridgename):
+        self.inputsentence = ["/interface/bridge/add"]
+        self.inputsentence.append("=name=" + bridgename)
+        self.writeSentence(self.inputsentence)
+        self.readSentence()
+
+    def readBridge(self):
+	global b
+        self.inputsentence = ["/interface/bridge/print"]
+        self.inputsentence.append('=count-only=')
+        self.writeSentence(self.inputsentence)
+        count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputsentence = ["/interface/bridge/print"]
+                self.writeSentence(self.inputsentence)
+                self.readSentence()
+
+    def updateBridge(self, number, bridgename):
+	self.inputsentence = ["/interface/bridge/set"]
+	self.inputsentence.append("=numbers=" + number)
+	self.inputsentence.append("=name=" + bridgename)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+    def deleteBridge(self, bridgenumber):
+	self.inputsentence = ["/interface/bridge/remove"]
+	self.inputsentence.append("=numbers=" + bridgenumber)
+	self.writeSentence(self.inputsentence)
+	self.readSentence() 
+
+#CRUD FOR BRIDGE PORT
+	
+    def createBridgePort(self, bridgename, vlaninterface, bridgeportinterface):
+	self.inputsentence = ["/interface/bridge/port/add"]
+	self.inputsentence.append("=bridge=" + bridgeportname)
+	self.inputsentence.append("=interface=" + vlaninterface)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+	self.inputsentence = ["/interface/bridge/port/add"]
+	self.inputsentence.append("=bridge=" + bridgeportname)
+	self.inputsentence.append("=interface=" + bridgeportinterface)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+	
+
+    def readBridgePort(self):
+	global b
+	self.inputsentence = ["/interface/bridge/port/print"]
+	self.inputsentence.append('=count-only=')
+        self.writeSentence(self.inputsentence)
+        count = int(self.readSentence()[1][5:])
+        for items in range(count):
+                self.inputsentence = ["/interface/bridge/port/print"]
+                self.writeSentence(self.inputsentence)
+                self.readSentence()
+
+    def updateBridgePort(self, number, bridgeportname, bridgeportinterface):
+	self.inputsentence = ["/interface/bridge/port/set"]
+	self.inputsentence.append("=numbers=" + number)
+	self.inputsentence.append("=bridge=" + bridgeportname)
+	self.inputsentence.append("=interface=" + bridgeportinterface)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
+
+    def deleteBridgePort(self, number):
+	self.inputsentence = ["/interface/bridge/port/remove"]
+	self.inputsentence.append("=numbers=" + number)
+	self.writeSentence(self.inputsentence)
+	self.readSentence()
 
 #CRUD FOR FIREWALL RULE
 
@@ -365,14 +489,14 @@ def main():
 	apiros.updateIp(sys.argv[2], sys.argv[3], sys.argv[4]);
     elif sys.argv[1] == "deleteip":
 	apiros.deleteIp(sys.argv[2]);
-    elif sys.argv[1] == "createvlan":
-        apiros.createVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]);
-    elif sys.argv[1] == "readvlan":
-        apiros.readVlan();
-    elif sys.argv[1] == "updatevlan":
-        apiros.updateVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
-    elif sys.argv[1] == "deletevlan":
-        apiros.deleteVlan(sys.argv[2], sys.argv[3]);
+    elif sys.argv[1] == "createvlanall":
+        apiros.createVlanAll(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6]);
+    elif sys.argv[1] == "readvlanall":
+        apiros.readVlanAll();
+    elif sys.argv[1] == "updatevlanall":
+        apiros.updateVlanAll(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
+    elif sys.argv[1] == "deletevlanall":
+        apiros.deleteVlanAll(sys.argv[2], sys.argv[3]);
     elif sys.argv[1] == "printrule":
 	apiros.readRule();
     elif sys.argv[1] == "createrule":
@@ -397,6 +521,30 @@ def main():
 	apiros.updateRoute(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
     elif sys.argv[1] == "deleteroute":
 	apiros.deleteRoute(sys.argv[2]);
+    elif sys.argv[1] == "createvlan":
+        apiros.createVlan(sys.argv[2], sys.argv[3], sys.argv[4]);
+    elif sys.argv[1] == "readvlan":
+	apiros.readVlan();
+    elif sys.argv[1] == "updatevlan":
+	apiros.updateVlan(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]);
+    elif sys.argv[1] == "deletevlan":
+	apiros.deleteVlan(sys.argv[2]);
+    elif sys.argv[1] == "createbridge":
+	apiros.createBridge(sys.argv[1]);
+    elif sys.argv[1] == "readbridge":
+	apiros.readBridge();
+    elif sys.argv[1] == "updatebridge":
+	apiros.updateBridge(sys.argv[2], sys.argv[3]);
+    elif sys.argv[1] == "deletebridge":
+	apiros.deleteBridge(sys.argv[2]);
+    elif sys.argv[1] == "createbridgeport":
+	apiros.createBridgePort(sys.argv[2], sys.argv[3], sys.argv[4]);
+    elif sys.argv[1] == "readbridgeport":
+	apiros.readBridgePort();
+    elif sys.argv[1] == "updatebridgeport":
+	apiros.updateBridgePort(sys.argv[2], sys.argv[3], sys.argv[4]);
+    elif sys.argv[1] == "deletebridgeport":
+	apiros.deleteBridgePort(sys.argv[2]);
     
 if __name__ == '__main__':
     main()
